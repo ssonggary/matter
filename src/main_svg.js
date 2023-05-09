@@ -65,8 +65,8 @@ function handleResize(container) {
 window.addEventListener("resize", () => handleResize(container));
 
 // create two boxes and a ground
-let boxA = Bodies.rectangle(400, 0, 80, 80);
-let circleA = Bodies.circle(500, 10, 75, {
+let boxA = Bodies.rectangle(400, -200, 80, 80);
+let circleA = Bodies.circle(500, -500, 75, {
   restitution: 0.5,
   render: {
     sprite: {
@@ -79,13 +79,37 @@ let circleA = Bodies.circle(500, 10, 75, {
 createCircle();
 // createSvgBodies();
 
-let boxB = Bodies.rectangle(450, 10, 80, 80);
+let boxB = Bodies.rectangle(450, -400, 80, 80);
 let ground = Bodies.rectangle(container.clientWidth / 2, container.clientHeight + THICCNESS / 2, 27184, THICCNESS, { isStatic: true });
 let leftWall = Bodies.rectangle(0 - THICCNESS / 2, container.clientHeight / 2, THICCNESS, container.clientHeight * 5, { isStatic: true });
 let rightWall = Bodies.rectangle(container.clientWidth + THICCNESS / 2, container.clientHeight / 2, THICCNESS, container.clientHeight * 5, { isStatic: true });
 
 // add all of the bodies to the world
 Composite.add(engine.world, [boxA, boxB, circleA, ground, leftWall, rightWall]);
+
+function createCircle() {
+  let circleDiameter = container.clientWidth * SVG_WIDTH_AS_PERCENT_OF_CONTAINER_WIDTH;
+  let circle = Bodies.circle(container.clientWidth / 2, -600, circleDiameter / 2, {
+    friction: 0.3,
+    frictionAir: 0.00001,
+    restitution: 0.8,
+    render: {
+      fillStyle: "#ECA869",
+      strokeStyle: "#ECA869",
+    },
+  });
+  Composite.add(engine.world, circle);
+}
+
+for (let i = 0; i < 40; i++) {
+  let circle = Bodies.circle(i, -500, 70, {
+    friction: 0.3,
+    frictionAir: 0.00001,
+    restitution: 0.8,
+  });
+
+  Composite.add(engine.world, circle);
+}
 
 let mouse = Mouse.create(render.canvas);
 let mouseConstraint = MouseConstraint.create(engine, {
@@ -100,19 +124,9 @@ let mouseConstraint = MouseConstraint.create(engine, {
 
 Composite.add(engine.world, mouseConstraint);
 
-function createCircle() {
-  let circleDiameter = container.clientWidth * SVG_WIDTH_AS_PERCENT_OF_CONTAINER_WIDTH;
-  let circle = Bodies.circle(container.clientWidth / 2, 10, circleDiameter / 2, {
-    friction: 0.3,
-    frictionAir: 0.00001,
-    restitution: 0.8,
-    render: {
-      fillStyle: "#ECA869",
-      strokeStyle: "#ECA869",
-    },
-  });
-  Composite.add(engine.world, circle);
-}
+//allow scroll through the canvas
+mouseConstraint.mouse.element.removeEventListener("mousewheel", mouseConstraint.mouse.mousewheel);
+mouseConstraint.mouse.element.removeEventListener("DOMMouseScroll", mouseConstraint.mouse.mousewheel);
 
 // function createSvgBodies() {
 //   const paths = document.querySelectorAll(SVG_SELECTOR);
