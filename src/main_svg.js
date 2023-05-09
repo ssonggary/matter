@@ -30,6 +30,8 @@ let Engine = Matter.Engine,
 let engine = Engine.create(),
   world = engine.world;
 
+// engine.gravity.y = 0.9;
+
 // create a renderer
 let render = Render.create({
   element: container,
